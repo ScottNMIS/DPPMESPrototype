@@ -1,1 +1,8 @@
 streamlit
+pandas
+numpy
+vega_datasets
+altair
+streamlit-option-menu
+opencv-python
+pyzbar
