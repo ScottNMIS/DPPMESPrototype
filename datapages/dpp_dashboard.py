@@ -9,6 +9,49 @@ from datetime import datetime
 # Set up your OpenAI API key
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
+# Define your functions (unchanged)
+functions = [
+    {
+        "name": "get_weather",
+        "description": "Get the current weather in a location",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {"type": "string", "description": "The city and state, e.g. San Francisco, CA"},
+            },
+            "required": ["location"]
+        }
+    },
+    {
+        "name": "get_current_time",
+        "description": "Get the current time",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "generate_pie_chart",
+        "description": "Generate a pie chart with given labels and sizes",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "labels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Labels for the pie chart segments"
+                },
+                "sizes": {
+                    "type": "array",
+                    "items": {"type": "number"},
+                    "description": "Sizes for each pie chart segment"
+                }
+            },
+            "required": ["labels", "sizes"]
+        }
+    }
+]
+
 # Mock functions (unchanged)
 def get_weather(location):
     temp = 25  # Mock temperature
@@ -146,6 +189,13 @@ def apply_custom_styles():
         }
         </style>
     """, unsafe_allow_html=True)
+
+# Initialize session state for messages and generated content
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+
+if 'generated_content' not in st.session_state:
+    st.session_state.generated_content = []
 
 def create_gauge_chart(value, title):
     score_map = {'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1}
@@ -288,7 +338,7 @@ def show_dpp_dashboard():
     # Left column: Chat interface
     with col1:
         st.markdown("### Chat")
-        chat_display = st.container()
+        chat_display = st.container(height=300)
         with chat_display:
             for chat in st.session_state.messages:
                 if chat["role"] == "user":
@@ -331,7 +381,7 @@ def show_dpp_dashboard():
     # Right column: Generated Content
     with col2:
         st.markdown("### Generated Content")
-        content_container = st.container()
+        content_container = st.container(height=300)
         with content_container:
             if len(st.session_state.generated_content) > 0:
                 for idx, content in enumerate(st.session_state.generated_content):

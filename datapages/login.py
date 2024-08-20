@@ -28,7 +28,7 @@ def show_login():
         if st.button("Start QR Scanning"):
             qr_detected = False
             while not qr_detected:
-                qr_code_image = st.camera_input("Scan QR Code")
+                qr_code_image = st.camera_input("Scan QR Code", key="qrKeyLogin")
 
                 if qr_code_image:
                     file_bytes = np.asarray(bytearray(qr_code_image.read()), dtype=np.uint8)
