@@ -4,5 +4,12 @@ numpy
 vega_datasets
 altair
 streamlit-option-menu
-opencv-python
+opencv-python-headless
 pyzbar
+numpy-stl
+pythreejs
+plotly
+pywavefront
+requests
+trimesh
+pythreejs

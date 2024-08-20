@@ -1,7 +1,8 @@
 import streamlit as st
 import cv2
-import numpy as np
 from pyzbar.pyzbar import decode
+import numpy as np
+import time
 
 def show_login():
     st.title("Login Screen")
@@ -21,23 +22,32 @@ def show_login():
 
     with col2:
         st.subheader("Login with QR Code")
-        st.text("Scan the QR code to log in")
+        st.text("Keep scanning the QR code until it is detected")
 
-        qr_code = st.camera_input("Scan QR Code")
-        if qr_code:
-            file_bytes = np.asarray(bytearray(qr_code.read()), dtype=np.uint8)
-            img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-            qr_data = decode_qr_code(img)
-            if qr_data:
-                st.success(f"QR code scanned successfully: {qr_data}")
-            else:
-                st.error("No QR code detected or unreadable QR code")
+        # Button to start the QR scanning process
+        if st.button("Start QR Scanning"):
+            qr_detected = False
+            while not qr_detected:
+                qr_code_image = st.camera_input("Scan QR Code")
 
-def decode_qr_code(img):
-    qr_codes = decode(img)
-    for qr_code in qr_codes:
-        return qr_code.data.decode('utf-8')
-    return None
+                if qr_code_image:
+                    file_bytes = np.asarray(bytearray(qr_code_image.read()), dtype=np.uint8)
+                    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+
+                    qr_codes = decode(img)
+                    if qr_codes:
+                        for qr_code in qr_codes:
+                            data = qr_code.data.decode('utf-8')
+                            st.success(f"QR Code detected: {data}")
+                            qr_detected = True
+                            break
+                    else:
+                        st.info("No QR code detected. Retrying in 1 second...")
+                        time.sleep(1)  # Wait for 1 second before trying again
+
+                    # Display the captured image
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    st.image(img)
 
 # Function call for testing in standalone mode
 if __name__ == "__main__":
