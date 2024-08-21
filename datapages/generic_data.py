@@ -30,7 +30,7 @@ def load_css():
         .top-bar {
             background-color: #3498db;
             color: white;
-            padding: 1rem;
+            padding: 0.4rem;
             border-radius: 10px;
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -190,7 +190,7 @@ def load_button_css():
     st.markdown("""
         <style>
         .top-banner-container {
-            margin-bottom: 1rem;
+            margin-bottom: 0rem;
         }
         .top-bar {
             background-color: #3498db;

@@ -509,7 +509,7 @@ def show_advanced_dpp_dashboard():
     
     data = MOCK_DATA
     
-    show_top_bar(data)
+    #show_top_bar(data)
 
     tabs = st.tabs(["Overview", "Technical Data", "Manufacturing", "Remanufacturing", "Sustainability", "Maintenance", "Documentation"])
 
@@ -530,7 +530,7 @@ def show_advanced_dpp_dashboard():
 
     add_buttons()
 
-    show_footer(data)
+    #show_footer(data)
 
 if __name__ == "__main__":
     show_advanced_dpp_dashboard()

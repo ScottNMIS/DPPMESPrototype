@@ -178,7 +178,7 @@ def create_gauge_chart(value, title):
     return fig
 
 def show_dpp_dashboard():
-    show_top_bar()
+    #show_top_bar()
     if st.button("Request Access to Advanced Digital Product Data"):
         st.session_state['request_access_clicked'] = True
         st.rerun()
