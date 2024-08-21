@@ -2,42 +2,75 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-def show_additional_page():
-    st.title("Process Input Form")
+def show_data_input():
+    st.title("Digital Product Passport Data Input")
 
-    with st.form(key='additional_form'):
-        st.subheader("Process Details")
-        
+    # Create tabs for different sections
+    tabs = st.tabs(["Basic Info", "Files", "Manufacturing", "Repair", "Quality"])
+
+    # Basic Info Tab
+    with tabs[0]:
+        st.header("Basic Information")
         col1, col2 = st.columns(2)
-        
         with col1:
-            part_id = st.selectbox('Part ID', options=['Part 1', 'Part 2', 'Part 3'])
-            process_name = st.selectbox('Process Name', options=['Process A', 'Process B', 'Process C'])
-            operator = st.text_input('Operator')
-        
+            part_number = st.text_input("Part Number")
+            mass = st.text_input("Mass")
+            hardness = st.text_input("Hardness")
         with col2:
-            process_start_time = st.date_input('Process Start Date', value=datetime.today())
-            process_start_time_hour = st.time_input('Process Start Time')
-            process_end_time = st.date_input('Process End Date', value=datetime.today())
-            process_end_time_hour = st.time_input('Process End Time')
+            part_description = st.text_area("Part Description")
+            material = st.text_input("Material")
 
-        attachments = st.file_uploader('Attachments', accept_multiple_files=True)
+    # Files Tab
+    with tabs[1]:
+        st.header("File Uploads")
+        col1, col2 = st.columns(2)
+        with col1:
+            cad_file = st.file_uploader("CAD File", type=["stp", "step", "iges"])
+            mbd_qif_file = st.file_uploader("MBD QIF File", type=["qif"])
+            pdf_3d = st.file_uploader("3D PDF", type=["pdf"])
+        with col2:
+            cad_file_remake = st.file_uploader("CAD File (Remake)", type=["stp", "step", "iges"])
+            mbd_qif_file_remake = st.file_uploader("MBD QIF File (Remake)", type=["qif"])
+            pdf_3d_remake = st.file_uploader("3D PDF (Remake)", type=["pdf"])
 
-        submit_button = st.form_submit_button(label='Submit')
-        if submit_button:
-            st.success(f"Form submitted successfully!\n"
-                       f"Part ID: {part_id}\n"
-                       f"Process Name: {process_name}\n"
-                       f"Operator: {operator}\n"
-                       f"Process Start: {process_start_time} {process_start_time_hour}\n"
-                       f"Process End: {process_end_time} {process_end_time_hour}\n"
-                       f"Attachments: {attachments}")
+    # Manufacturing Tab
+    with tabs[2]:
+        st.header("Manufacturing Information")
+        col1, col2 = st.columns(2)
+        with col1:
+            mes_part_number = st.text_input("MES Part Number")
+            machine_number = st.text_input("Machine Number")
+        with col2:
+            operation_time = st.text_input("Operation Time")
+            excel_report = st.file_uploader("Excel Report", type=["xlsx", "xls"])
 
-    st.write("Please note that attachments will not be saved until the full form is submitted using the button below.")
+    # Repair Tab
+    with tabs[3]:
+        st.header("Repair Information")
+        repair_guideline = st.file_uploader("Repair Guideline", type=["pdf", "docx"])
+        repair_images = st.file_uploader("Repair Images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-    if st.button('Back to Home Screen'):
-        st.experimental_set_query_params(page="home")
+    # Quality Tab
+    with tabs[4]:
+        st.header("Quality Information")
+        qif_results_file = st.file_uploader("QIF Results File", type=["qif"])
+        audit_report = st.file_uploader("Audit Report", type=["pdf", "docx"])
 
-# Function call for testing in standalone mode
+    # Submit Button
+    if st.button("Submit Data"):
+        # Here you would typically process and save the data
+        # For now, we'll just show a success message
+        st.success("Data submitted successfully!")
+
+    # Download existing data (placeholder for future functionality)
+    st.header("Download Existing Data")
+    if st.button("Download Data"):
+        # Here you would typically retrieve and provide the data for download
+        # For now, we'll just show an info message
+        st.info("Data download functionality will be implemented in the future.")
+
+def show_data_input_page():
+    show_data_input()
+
 if __name__ == "__main__":
-    show_additional_page()
+    show_data_input_page()

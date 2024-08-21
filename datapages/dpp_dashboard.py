@@ -7,6 +7,8 @@ from datetime import datetime
 import os
 from openai import OpenAI
 from decouple import config 
+from datapages.generic_data import show_footer, show_top_bar
+from datapages.dataholder import MOCK_DATA
 
 # Set up your OpenAI API key using the .env file
 client = OpenAI(api_key=config('OPENAI_API_KEY'))
@@ -82,44 +84,6 @@ def generate_pie_chart(labels, sizes):
     ax.axis('equal')
     st.session_state.generated_content.append({"type": "pie_chart", "title": "Pie Chart", "figure": fig})
     return "Pie chart displayed successfully."
-
-def show_top_bar():
-    account_name = st.session_state.get('account_name', 'Guest')
-    st.markdown("""
-        <style>
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
-        }
-        .user-info {
-            font-size: 18px;
-        }
-        .stButton button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-        }
-        .stButton button:hover {
-            background-color: #45a049;
-        }
-        </style>
-        <div class="top-bar">
-            <div class="user-info">Logged in as: <strong>{account_name}</strong></div>
-            <div class="button-placeholder"></div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    if st.button("Request Access to Advanced Digital Product Data"):
-        st.session_state['request_access_clicked'] = True
-        st.rerun()
 
 def load_css():
     st.markdown("""
@@ -215,6 +179,9 @@ def create_gauge_chart(value, title):
 
 def show_dpp_dashboard():
     show_top_bar()
+    if st.button("Request Access to Advanced Digital Product Data"):
+        st.session_state['request_access_clicked'] = True
+        st.rerun()
     load_css()
     data = MOCK_DATA  # Use the provided mock data
 

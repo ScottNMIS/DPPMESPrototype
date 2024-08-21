@@ -4,240 +4,45 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from datapages.generic_data import show_footer, load_css
+from datapages.dataholder import MOCK_DATA
 
-MOCK_DATA = {
-    "productName": "High-Performance Turbine Blade",
-    "partNumber": "TB-2024-X1",
-    "manufacturer": "National Manufacturing Institute Scotland",
-    "manufacturingDate": "2024-03-15",
-    "sustainabilityScore": 85,
-    "reparabilityScore": 78,
-    "carbonFootprint": 120.5,
-    "materials": ["Nickel-based superalloy", "Ceramic coating"],
-    "dimensions": {"length": "50 cm", "width": "10 cm", "height": "5 cm"},
-    "weight": "2.3 kg",
-    "lifecycle": {
-        "expectedLifespan": "50,000 flight hours",
-        "maintenanceIntervals": ["Every 5,000 hours", "Major overhaul at 25,000 hours"]
-    },
-    "remanufacturingData": {
-        "processSteps": [
-            "Inspection", "Cleaning", "Repair", "Coating", "Testing"
-        ],
-        "toolsRequired": [
-            "Optical microscope", "Ultrasonic cleaner", "Welding equipment", 
-            "Plasma spray system", "Non-destructive testing equipment"
-        ],
-        "averageTimeToRemanufacture": "72 hours",
-        "successRate": 0.92,
-        "costSavingsPercentage": 0.65
-    },
-    "repairHistory": [
-        {"date": "2025-06-10", "type": "Minor repair", "description": "Edge refinishing"},
-        {"date": "2026-09-22", "type": "Major overhaul", "description": "Coating replacement and core repair"}
-    ],
-    "performanceData": {
-        "efficiency": [
-            {"date": "2024-04-01", "value": 0.95},
-            {"date": "2024-07-01", "value": 0.94},
-            {"date": "2024-10-01", "value": 0.93},
-            {"date": "2025-01-01", "value": 0.92},
-            {"date": "2025-04-01", "value": 0.91},
-            {"date": "2025-07-01", "value": 0.90}
-        ],
-        "vibration": [
-            {"date": "2024-04-01", "value": 0.02},
-            {"date": "2024-07-01", "value": 0.025},
-            {"date": "2024-10-01", "value": 0.03},
-            {"date": "2025-01-01", "value": 0.035},
-            {"date": "2025-04-01", "value": 0.04},
-            {"date": "2025-07-01", "value": 0.045}
-        ]
-    },
-    "contactInfo": {
-        "email": "contact@strath.ac.uk",
-        "phone": "+44 141 548 3623",
-        "website": "https://www.strath.ac.uk/research/advancedformingresearchcentre/"
-    },
-    "dppResources": [
-        {"title": "Introduction to Digital Product Passports", "url": "#"},
-        {"title": "DPP Implementation Guide", "url": "#"},
-        {"title": "DPP Standards and Regulations", "url": "#"},
-        {"title": "Case Studies: DPP in Manufacturing", "url": "#"}
-    ]
-}
 
-def load_css():
+# Add CSS for making buttons full-width, green, and with a height of 100px
+def load_button_css():
     st.markdown("""
         <style>
-        /* Global Styles */
-        .main {
-            background-color: #f0f2f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            color: #2c3e50;
-            font-weight: 600;
-        }
-        /* Top Bar */
-        .top-bar {
-            background-color: #3498db;
-            color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .top-bar h1 {
-            margin: 0;
-            color: white;
-            font-size: 2rem;
-        }
-        .top-bar p {
-            margin: 0;
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-        /* Tabs */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 1rem;
-            background-color: #ecf0f1;
-            padding: 0.5rem;
-            border-radius: 10px;
-        }
-        .stTabs [data-baseweb="tab-list"] button {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #34495e;
-            background-color: transparent;
-            border: none;
-            border-radius: 5px;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s ease;
-        }
-        .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-            background-color: #3498db;
-            color: white;
-        }
-        .stTabs [data-baseweb="tab-panel"] {
-            background-color: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        /* Cards */
-        .card {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-5px);
-        }
-        .info-header {
-            font-weight: 600;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-        }
-        .info-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-        /* Metric Cards */
-        .metric-card {
-            background-color: #ecf0f1;
-            border-radius: 10px;
-            padding: 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .metric-card:hover {
-            background-color: #3498db;
-        }
-        .metric-card:hover .metric-value,
-        .metric-card:hover .metric-label {
-            color: white;
-        }
-        .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2980b9;
-        }
-        .metric-label {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-        /* Tables */
-        .dataframe {
+        .full-width-button > button {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .dataframe th, .dataframe td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .dataframe th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .dataframe tr:last-child td {
-            border-bottom: none;
-        }
-        /* Buttons */
-        .stButton > button {
-            background-color: #3498db;
-            color: white;
+            height: 100px;  /* Set the height to 100px */
+            background-color: #28a745; /* Green background */
+            color: white;  /* White text */
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 16px; /* Adjust font size */
+            border-radius: 8px; /* Optional: Rounded corners */
         }
-        .stButton > button:hover {
-            background-color: #2980b9;
-        }
-        /* Footer */
-        .footer {
-            background-color: #34495e;
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-top: 2rem;
-        }
-        .footer h3 {
-            color: white;
-            margin-top: 0;
-        }
-        .footer ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .footer ul li {
-            margin-bottom: 0.5rem;
-        }
-        .footer a {
-            color: #3498db;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
+        .full-width-button > button:hover {
+            background-color: #218838; /* Darker green on hover */
         }
         </style>
     """, unsafe_allow_html=True)
+
+# Add buttons in full-width columns with the green color and height adjustment
+def add_buttons():
+    # Load the CSS for full-width, green, and height-100px buttons
+    load_button_css()
+    col1, col2, col3 = st.columns(3)  # Equal column width
+    with col1:
+        if st.button("Button 1", key="btn1", help="Click to interact", use_container_width=True):
+            st.write("Button 1 clicked")
+    with col2:
+        if st.button("Button 2", key="btn2", help="Click to interact", use_container_width=True):
+            st.write("Button 2 clicked")
+    with col3:
+        if st.button("Button 3", key="btn3", help="Click to interact", use_container_width=True):
+            st.write("Button 3 clicked")
+
+
 
 def create_gauge_chart(value: int, title: str) -> go.Figure:
     return go.Figure(go.Indicator(
@@ -697,18 +502,7 @@ def show_overview_tab(data: dict):
     st.subheader("Performance Metrics")
     create_scrollable_charts()
 
-def show_footer(data: dict):
-    st.markdown(f"""
-        <div class="footer">
-            <h3>Digital Product Passport Resources</h3>
-            <ul>
-                {"".join(f'<li><a href="{resource["url"]}">{resource["title"]}</a></li>' for resource in data['dppResources'])}
-            </ul>
-            <p>Last Updated: 2024-08-21 | <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
-            <p>For technical support, please contact: {data['contactInfo']['email']} | {data['contactInfo']['phone']}</p>
-            <p>Visit our website: <a href="{data['contactInfo']['website']}">{data['contactInfo']['website']}</a></p>
-        </div>
-    """, unsafe_allow_html=True)
+
 
 def show_advanced_dpp_dashboard():
     load_css()
@@ -733,6 +527,8 @@ def show_advanced_dpp_dashboard():
         show_maintenance_tab(data)
     with tabs[6]:
         show_documentation_tab()
+
+    add_buttons()
 
     show_footer(data)
 

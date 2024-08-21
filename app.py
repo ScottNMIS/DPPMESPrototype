@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 from datapages.dpp_dashboard import show_dpp_dashboard
 from datapages.dpp_advanceddashboard import show_advanced_dpp_dashboard
 from datapages.data_visualisation import show_data_visualisation
-from datapages.additional_page import show_additional_page
+from datapages.additional_page import show_data_input_page
 from datapages.advanced_visualisation import show_advanced_visualisation
 from datapages.login import show_login
 from datapages.model_viewer import show_model_viewer
@@ -14,12 +14,16 @@ from datapages.howden_demo_initial import show_howden_demo_initial
 from datapages.howden_remake import show_howden_remake
 from datapages.keycloak_test import show_keycloak_test
 from datapages.dpp_management import show_dpp_management
-
+from datapages.generic_data import show_footer, load_css, top_banner_main
+from datapages.dataholder import MOCK_DATA
 
 # Ensure this is the first Streamlit command
 st.set_page_config(page_title="MES DPP - NMIS", layout="wide")
 
 def main():
+    load_css()
+    top_banner_main()
+
     # Initialize session state for request access
     if 'request_access_clicked' not in st.session_state:
         st.session_state.request_access_clicked = False
@@ -33,7 +37,7 @@ def main():
 
         selected = option_menu(
             "Main Menu", 
-            ["Login", "Dashboard", "Advanced Dashboard", "Data Visualisation", "Additional Page", "Advanced Visualisation", "3D Model Viewer", "Factory Data", "Sustainability Info", "Company Info", "Customisation", "Howden Demo Initial", "Howden Remake", "Keycloak Test", "DPP Management"],
+            ["Login", "Dashboard", "Advanced Dashboard", "Data Visualisation", "Data Input", "Advanced Visualisation", "3D Model Viewer", "Factory Data", "Sustainability Info", "Company Info", "Customisation", "Howden Demo Initial", "Howden Remake", "Keycloak Test", "DPP Management"],
             icons=['person', 'house', 'input-cursor-text', 'bar-chart-line', 'file-earmark-plus', 'graph-up', 'cube', 'database', 'leaf', 'building', 'wrench', 'key', 'file-code', 'robot'],
             menu_icon="cast", 
             default_index=0
@@ -56,8 +60,8 @@ def main():
         show_advanced_dpp_dashboard()
     elif st.session_state.selected_page == "Data Visualisation":
         show_data_visualisation()
-    elif st.session_state.selected_page == "Additional Page":
-        show_additional_page()
+    elif st.session_state.selected_page == "Data Input":
+        show_data_input_page()
     elif st.session_state.selected_page == "Advanced Visualisation":
         show_advanced_visualisation()
     elif st.session_state.selected_page == "3D Model Viewer":
@@ -78,6 +82,8 @@ def main():
         show_dpp_management()
 
     st.sidebar.info('Developed by National Manufacturing Institute Scotland')
+
+    show_footer(MOCK_DATA)
 
 
 if __name__ == "__main__":
