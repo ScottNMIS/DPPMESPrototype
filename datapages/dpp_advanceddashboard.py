@@ -1,16 +1,14 @@
-import streamlit as st
+﻿import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
-# Mock data remains the same as before
-# Mock data - replace with API call in the future
 MOCK_DATA = {
     "productName": "High-Performance Turbine Blade",
     "partNumber": "TB-2024-X1",
-    "manufacturer": "TurboCorp Industries",
+    "manufacturer": "National Manufacturing Institute Scotland",
     "manufacturingDate": "2024-03-15",
     "sustainabilityScore": 85,
     "reparabilityScore": 78,
@@ -55,7 +53,18 @@ MOCK_DATA = {
             {"date": "2025-04-01", "value": 0.04},
             {"date": "2025-07-01", "value": 0.045}
         ]
-    }
+    },
+    "contactInfo": {
+        "email": "contact@strath.ac.uk",
+        "phone": "+44 141 548 3623",
+        "website": "https://www.strath.ac.uk/research/advancedformingresearchcentre/"
+    },
+    "dppResources": [
+        {"title": "Introduction to Digital Product Passports", "url": "#"},
+        {"title": "DPP Implementation Guide", "url": "#"},
+        {"title": "DPP Standards and Regulations", "url": "#"},
+        {"title": "Case Studies: DPP in Manufacturing", "url": "#"}
+    ]
 }
 
 def load_css():
@@ -559,24 +568,152 @@ def show_documentation_tab():
         </div>
     """, unsafe_allow_html=True)
 
-def show_footer():
+def create_scrollable_charts():
+    charts = [
+        ("Efficiency Over Time", create_efficiency_chart()),
+        ("Vibration Over Time", create_vibration_chart()),
+        ("Material Composition", create_material_composition_chart()),
+        ("Carbon Footprint by Lifecycle Stage", create_carbon_footprint_chart())
+    ]
+    
     st.markdown("""
+        <style>
+        .scroll-container {
+            overflow: hidden;
+            position: relative;
+        }
+        .scroll-chart {
+            transition: transform 0.3s ease;
+        }
+        .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background-color: rgba(255,255,255,0.7);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .scroll-button:hover {
+            background-color: rgba(255,255,255,0.9);
+        }
+        .scroll-button.left { left: 10px; }
+        .scroll-button.right { right: 10px; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="scroll-container">', unsafe_allow_html=True)
+    
+    for i, (title, chart) in enumerate(charts):
+        st.markdown(f'<div class="scroll-chart" id="chart-{i}">', unsafe_allow_html=True)
+        st.subheader(title)
+        st.plotly_chart(chart, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+        <button class="scroll-button left" onclick="scrollCharts(-1)">←</button>
+        <button class="scroll-button right" onclick="scrollCharts(1)">→</button>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown("""
+        <script>
+        let currentChart = 0;
+        const totalCharts = 4;
+        
+        function scrollCharts(direction) {
+            currentChart = (currentChart + direction + totalCharts) % totalCharts;
+            for (let i = 0; i < totalCharts; i++) {
+                const chart = document.getElementById(`chart-${i}`);
+                chart.style.transform = `translateX(${(i - currentChart) * 100}%)`;
+            }
+        }
+        </script>
+    """, unsafe_allow_html=True)
+
+def create_efficiency_chart():
+    efficiency_df = pd.DataFrame(MOCK_DATA['performanceData']['efficiency'])
+    efficiency_df['date'] = pd.to_datetime(efficiency_df['date'])
+    fig = px.line(efficiency_df, x='date', y='value', title='Efficiency Over Time')
+    fig.update_layout(
+        yaxis_title='Efficiency', 
+        xaxis_title='Date',
+        plot_bgcolor='rgba(0,0,0,0)',
+        yaxis=dict(gridcolor='rgba(0,0,0,0.1)')
+    )
+    return fig
+
+def create_vibration_chart():
+    vibration_df = pd.DataFrame(MOCK_DATA['performanceData']['vibration'])
+    vibration_df['date'] = pd.to_datetime(vibration_df['date'])
+    fig = px.line(vibration_df, x='date', y='value', title='Vibration Over Time')
+    fig.update_layout(
+        yaxis_title='Vibration (mm/s)', 
+        xaxis_title='Date',
+        plot_bgcolor='rgba(0,0,0,0)',
+        yaxis=dict(gridcolor='rgba(0,0,0,0.1)')
+    )
+    return fig
+
+def create_material_composition_chart():
+    fig = go.Figure(data=[go.Pie(labels=MOCK_DATA['materials'], values=[70, 30])])
+    fig.update_layout(
+        title='Material Composition',
+        plot_bgcolor='rgba(0,0,0,0)',
+    )
+    return fig
+
+def create_carbon_footprint_chart():
+    lifecycle_data = pd.DataFrame({
+        'Stage': ['Raw Material', 'Manufacturing', 'Use', 'End-of-Life'],
+        'Carbon Footprint (kg CO2e)': [40, 30, 45, 5.5],
+    })
+    fig = px.bar(lifecycle_data, x='Stage', y='Carbon Footprint (kg CO2e)', title='Carbon Footprint by Lifecycle Stage')
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        yaxis=dict(gridcolor='rgba(0,0,0,0.1)')
+    )
+    return fig
+
+def show_overview_tab(data: dict):
+    st.header("Product Overview")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.plotly_chart(create_gauge_chart(data['sustainabilityScore'], "Sustainability Score"), use_container_width=True)
+    with col2:
+        st.plotly_chart(create_gauge_chart(data['reparabilityScore'], "Reparability Score"), use_container_width=True)
+    with col3:
+        st.markdown(f"""
+            <div class="card">
+                <span class="info-header">Key Information</span>
+                <p><strong>Manufacturing Date:</strong> {data['manufacturingDate']}</p>
+                <p><strong>Expected Lifespan:</strong> {data['lifecycle']['expectedLifespan']}</p>
+                <p><strong>Weight:</strong> {data['weight']}</p>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.subheader("Performance Metrics")
+    create_scrollable_charts()
+
+def show_footer(data: dict):
+    st.markdown(f"""
         <div class="footer">
-            <h3>Additional Resources</h3>
+            <h3>Digital Product Passport Resources</h3>
             <ul>
-                <li><a href="#">Turbine Blade Performance Optimization Guide</a></li>
-                <li><a href="#">Industry Standards and Best Practices</a></li>
-                <li><a href="#">Sustainability in Turbine Manufacturing</a></li>
+                {"".join(f'<li><a href="{resource["url"]}">{resource["title"]}</a></li>' for resource in data['dppResources'])}
             </ul>
-            <p>Last Updated: 2024-08-20 | <a href="#">Data Sources</a> | <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
-            <p>For technical support, please contact: support@turbocorp.com</p>
+            <p>Last Updated: 2024-08-21 | <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
+            <p>For technical support, please contact: {data['contactInfo']['email']} | {data['contactInfo']['phone']}</p>
+            <p>Visit our website: <a href="{data['contactInfo']['website']}">{data['contactInfo']['website']}</a></p>
         </div>
     """, unsafe_allow_html=True)
 
 def show_advanced_dpp_dashboard():
     load_css()
     
-    data = MOCK_DATA  # Replace with API call in the future
+    data = MOCK_DATA
     
     show_top_bar(data)
 
@@ -597,7 +734,7 @@ def show_advanced_dpp_dashboard():
     with tabs[6]:
         show_documentation_tab()
 
-    show_footer()
+    show_footer(data)
 
 if __name__ == "__main__":
     show_advanced_dpp_dashboard()

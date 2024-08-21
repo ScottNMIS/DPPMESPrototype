@@ -15,10 +15,16 @@ from datapages.howden_remake import show_howden_remake
 from datapages.keycloak_test import show_keycloak_test
 from datapages.dpp_management import show_dpp_management
 
+
 # Ensure this is the first Streamlit command
 st.set_page_config(page_title="MES DPP - NMIS", layout="wide")
 
 def main():
+    # Initialize session state for request access
+    if 'request_access_clicked' not in st.session_state:
+        st.session_state.request_access_clicked = False
+
+
     # Sidebar Navigation with option_menu
     with st.sidebar:
         # Check if the selected page is already set in session state
@@ -27,8 +33,8 @@ def main():
 
         selected = option_menu(
             "Main Menu", 
-            ["Login", "Dashboard", "Advanced Dashboard", "Data Visualisation", "Additional Page", "Advanced Visualisation", "3D Model Viewer", "Factory Data", "Sustainability Info", "Company Info", "Customisation", "Howden Demo Initial", "Howden Remake", "Keycloak Test", "DPP Management", "OpenAI Test"],  # Add "OpenAI Test" to the menu
-            icons=['person', 'house', 'input-cursor-text', 'bar-chart-line', 'file-earmark-plus', 'graph-up', 'cube', 'database', 'leaf', 'building', 'wrench', 'key', 'file-code', 'robot'],  # Add appropriate icon for OpenAI Test
+            ["Login", "Dashboard", "Advanced Dashboard", "Data Visualisation", "Additional Page", "Advanced Visualisation", "3D Model Viewer", "Factory Data", "Sustainability Info", "Company Info", "Customisation", "Howden Demo Initial", "Howden Remake", "Keycloak Test", "DPP Management"],
+            icons=['person', 'house', 'input-cursor-text', 'bar-chart-line', 'file-earmark-plus', 'graph-up', 'cube', 'database', 'leaf', 'building', 'wrench', 'key', 'file-code', 'robot'],
             menu_icon="cast", 
             default_index=0
         )
@@ -36,7 +42,12 @@ def main():
         # Update session state with the selected page from the sidebar menu
         st.session_state.selected_page = selected
 
-    # Display selected page
+
+    # Handle "Request Access" button click
+    if st.session_state.get('request_access_clicked', False):
+        st.session_state.selected_page = "Advanced Dashboard"
+        st.session_state.request_access_clicked = False  # Reset the flag
+
     if st.session_state.selected_page == "Login":
         show_login()
     elif st.session_state.selected_page == "Dashboard":
