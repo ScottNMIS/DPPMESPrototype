@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 
+# Mock data remains the same as before
 # Mock data - replace with API call in the future
 MOCK_DATA = {
     "productName": "High-Performance Turbine Blade",
@@ -60,143 +61,195 @@ MOCK_DATA = {
 def load_css():
     st.markdown("""
         <style>
+        /* Global Styles */
         .main {
             background-color: #f0f2f6;
-            padding: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        /* Top Bar */
+        .top-bar {
+            background-color: #3498db;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .top-bar h1 {
+            margin: 0;
+            color: white;
+            font-size: 2rem;
+        }
+        .top-bar p {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        /* Tabs */
         .stTabs [data-baseweb="tab-list"] {
-            gap: 24px;
+            gap: 1rem;
+            background-color: #ecf0f1;
+            padding: 0.5rem;
+            border-radius: 10px;
         }
         .stTabs [data-baseweb="tab-list"] button {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            color: #1e1e1e;
-            background-color: #ffffff;
-            border-radius: 4px;
+            color: #34495e;
+            background-color: transparent;
+            border: none;
+            border-radius: 5px;
             padding: 0.5rem 1rem;
-            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
         }
         .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-            background-color: #007bff;
+            background-color: #3498db;
             color: white;
         }
         .stTabs [data-baseweb="tab-panel"] {
-            padding-top: 2rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 0 4px 4px 4px;
             background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        /* Cards */
         .card {
             background-color: white;
             padding: 1.5rem;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
-            color: #333; /* Ensure text inside cards is visible */
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
         }
         .info-header {
             font-weight: 600;
-            color: #555;
+            color: #7f8c8d;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
         .info-value {
             font-size: 1.2rem;
             font-weight: 700;
-            color: #333;
-            margin-top: 0.5rem;
-            display: block;
+            color: #2c3e50;
         }
-        .download-button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
+        /* Metric Cards */
         .metric-card {
-            background-color: #f8f9fa;
-            border-radius: 8px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
             padding: 1rem;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            color: #333; /* Ensure text in metric cards is visible */
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            background-color: #3498db;
+        }
+        .metric-card:hover .metric-value,
+        .metric-card:hover .metric-label {
+            color: white;
         }
         .metric-value {
             font-size: 2rem;
             font-weight: bold;
-            color: #007bff;
+            color: #2980b9;
         }
         .metric-label {
             font-size: 0.9rem;
-            color: #6c757d;
+            color: #7f8c8d;
         }
-        /* Style for tables */
-        table {
+        /* Tables */
+        .dataframe {
             width: 100%;
-            border-collapse: collapse;
-            background-color: #ffffff;  /* Ensure tables have a white background */
-            color: #333; /* Ensure text in tables is visible */
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
         }
-        th, td {
-            padding: 10px;
-            border: 1px solid #dddddd;
+        .dataframe th, .dataframe td {
+            padding: 0.75rem;
             text-align: left;
+            border-bottom: 1px solid #e0e0e0;
         }
-        th {
-            background-color: #f8f9fa; /* Light background for headers */
-            font-weight: bold;
+        .dataframe th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
         }
-        td {
-            color: #333; /* Ensure table text is visible */
+        .dataframe tr:last-child td {
+            border-bottom: none;
         }
-        /* Style for lists */
-        ul {
-            background-color: #ffffff; /* White background for lists */
-            padding: 15px;
-            border-radius: 8px;
-            color: #333; /* Ensure text in lists is visible */
+        /* Buttons */
+        .stButton > button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
-        li {
-            margin-bottom: 10px;
-            color: #333; /* Ensure text in list items is visible */
+        .stButton > button:hover {
+            background-color: #2980b9;
         }
-        /* Fix for headings (h1, h2, h3, etc.) */
-        h1, h2, h3, h4, h5, h6 {
-            color: #333 !important; /* Ensure all headings are visible */
+        /* Footer */
+        .footer {
+            background-color: #34495e;
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        .footer h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .footer ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .footer ul li {
+            margin-bottom: 0.5rem;
+        }
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
         }
         </style>
     """, unsafe_allow_html=True)
-
-
 
 def create_gauge_chart(value: int, title: str) -> go.Figure:
     return go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': title, 'font': {'size': 24}},
+        title={'text': title, 'font': {'size': 24, 'color': '#2c3e50'}},
         gauge={
-            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
-            'bar': {'color': "darkblue"},
+            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "#2c3e50"},
+            'bar': {'color': "#3498db"},
             'bgcolor': "white",
             'borderwidth': 2,
-            'bordercolor': "gray",
+            'bordercolor': "#7f8c8d",
             'steps': [
-                {'range': [0, 20], 'color': 'red'},
-                {'range': [20, 40], 'color': 'orange'},
-                {'range': [40, 60], 'color': 'yellow'},
-                {'range': [60, 80], 'color': 'lightgreen'},
-                {'range': [80, 100], 'color': 'green'}],
+                {'range': [0, 20], 'color': '#e74c3c'},
+                {'range': [20, 40], 'color': '#e67e22'},
+                {'range': [40, 60], 'color': '#f1c40f'},
+                {'range': [60, 80], 'color': '#2ecc71'},
+                {'range': [80, 100], 'color': '#27ae60'}],
             'threshold': {
-                'line': {'color': "red", 'width': 4},
+                'line': {'color': "#2c3e50", 'width': 4},
                 'thickness': 0.75,
                 'value': value
             }
@@ -205,9 +258,9 @@ def create_gauge_chart(value: int, title: str) -> go.Figure:
 
 def show_top_bar(data: dict):
     st.markdown(f"""
-        <div style="background-color:#007bff; color:white; padding:10px; border-radius:5px; margin-bottom:20px;">
-            <h1 style="margin:0;">{data['productName']}</h1>
-            <p style="margin:0;">Part Number: {data['partNumber']} | Manufacturer: {data['manufacturer']}</p>
+        <div class="top-bar">
+            <h1>{data['productName']}</h1>
+            <p>Part Number: {data['partNumber']} | Manufacturer: {data['manufacturer']}</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -234,14 +287,24 @@ def show_overview_tab(data: dict):
         efficiency_df = pd.DataFrame(data['performanceData']['efficiency'])
         efficiency_df['date'] = pd.to_datetime(efficiency_df['date'])
         fig = px.line(efficiency_df, x='date', y='value', title='Efficiency Over Time')
-        fig.update_layout(yaxis_title='Efficiency', xaxis_title='Date')
+        fig.update_layout(
+            yaxis_title='Efficiency', 
+            xaxis_title='Date',
+            plot_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(gridcolor='rgba(0,0,0,0.1)')
+        )
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
         vibration_df = pd.DataFrame(data['performanceData']['vibration'])
         vibration_df['date'] = pd.to_datetime(vibration_df['date'])
         fig = px.line(vibration_df, x='date', y='value', title='Vibration Over Time')
-        fig.update_layout(yaxis_title='Vibration (mm/s)', xaxis_title='Date')
+        fig.update_layout(
+            yaxis_title='Vibration (mm/s)', 
+            xaxis_title='Date',
+            plot_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(gridcolor='rgba(0,0,0,0.1)')
+        )
         st.plotly_chart(fig, use_container_width=True)
 
 def show_technical_data_tab(data: dict):
@@ -268,7 +331,7 @@ def show_technical_data_tab(data: dict):
     
     st.subheader("CAD Files")
     st.markdown("""
-        <div style="background-color: #f0f0f0; padding: 20px; border-radius: 5px;">
+        <div class="card">
             <h3 style="margin-top: 0;">3D Model Viewer</h3>
             <p>The 3D model viewer would be embedded here. For this mock-up, imagine an interactive 3D model of the turbine blade.</p>
         </div>
@@ -283,7 +346,6 @@ def show_manufacturing_tab(data: dict):
     st.header("Manufacturing & Supply Chain")
     st.subheader("Operation Routing")
     
-    # Mock operation routing data
     operations = [
         {"step": 1, "operation": "Material preparation", "time": "2 hours"},
         {"step": 2, "operation": "Casting", "time": "4 hours"},
@@ -305,7 +367,7 @@ def show_manufacturing_tab(data: dict):
         'Quantity': [1, 1, 1],
         'Supplier': ['AlloyTech Inc.', 'CeramicPro', 'TitaniumSolutions']
     })
-    st.dataframe(bom_data)
+    st.table(bom_data)
     st.download_button("Download Full BOM", data=bom_data.to_csv(index=False), file_name="bill_of_materials.csv", mime="text/csv")
 
 def show_sustainability_tab(data: dict):
@@ -335,7 +397,11 @@ def show_sustainability_tab(data: dict):
     
     st.subheader("Material Composition")
     fig = go.Figure(data=[go.Pie(labels=data['materials'], values=[70, 30])])
-    st.plotly_chart(fig)
+    fig.update_layout(
+        title='Material Composition',
+        plot_bgcolor='rgba(0,0,0,0)',
+    )
+    st.plotly_chart(fig, use_container_width=True)
     
     st.subheader("Lifecycle Assessment")
     lifecycle_data = pd.DataFrame({
@@ -344,7 +410,7 @@ def show_sustainability_tab(data: dict):
         'Water Usage (m3)': [2, 1.5, 0.5, 0.1],
         'Energy Consumption (MWh)': [5, 3, 1.5, 0.2]
     })
-    st.dataframe(lifecycle_data)
+    st.table(lifecycle_data)
     
     st.subheader("Environmental Certifications")
     certifications = [
@@ -353,7 +419,7 @@ def show_sustainability_tab(data: dict):
         "Carbon Trust Standard"
     ]
     for cert in certifications:
-        st.markdown(f"- {cert}")
+        st.markdown(f"<div class='card'><p>{cert}</p></div>", unsafe_allow_html=True)
 
 def show_remanufacturing_tab(data: dict):
     st.header("Remanufacturing & Repair")
@@ -369,14 +435,14 @@ def show_remanufacturing_tab(data: dict):
     with col2:
         st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-value">{data['remanufacturingData']['successRate']*100}%</div>
+                <div class="metric-value">{data['remanufacturingData']['successRate']*100:.1f}%</div>
                 <div class="metric-label">Remanufacturing Success Rate</div>
             </div>
         """, unsafe_allow_html=True)
     with col3:
         st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-value">{data['remanufacturingData']['costSavingsPercentage']*100}%</div>
+                <div class="metric-value">{data['remanufacturingData']['costSavingsPercentage']*100:.1f}%</div>
                 <div class="metric-label">Cost Savings vs. New</div>
             </div>
         """, unsafe_allow_html=True)
@@ -386,17 +452,23 @@ def show_remanufacturing_tab(data: dict):
     st.table(process_df)
 
     st.subheader("Required Tools and Equipment")
-    for tool in data['remanufacturingData']['toolsRequired']:
-        st.markdown(f"- {tool}")
+    col1, col2 = st.columns(2)
+    for i, tool in enumerate(data['remanufacturingData']['toolsRequired']):
+        if i % 2 == 0:
+            with col1:
+                st.markdown(f"<div class='card'><p>{tool}</p></div>", unsafe_allow_html=True)
+        else:
+            with col2:
+                st.markdown(f"<div class='card'><p>{tool}</p></div>", unsafe_allow_html=True)
 
     st.subheader("Repair History")
     repair_df = pd.DataFrame(data['repairHistory'])
     repair_df['date'] = pd.to_datetime(repair_df['date'])
-    st.dataframe(repair_df)
+    st.table(repair_df)
 
     st.subheader("Remanufacturing Guidelines")
     st.markdown("""
-        <div style="background-color: #f0f0f0; padding: 20px; border-radius: 5px;">
+        <div class="card">
             <h4 style="margin-top: 0;">Key Considerations for Remanufacturing:</h4>
             <ul>
                 <li>Ensure all safety protocols are followed during the remanufacturing process.</li>
@@ -413,7 +485,7 @@ def show_maintenance_tab(data: dict):
     
     st.subheader("Maintenance Schedule")
     for interval in data['lifecycle']['maintenanceIntervals']:
-        st.markdown(f"- {interval}")
+        st.markdown(f"<div class='card'><p>{interval}</p></div>", unsafe_allow_html=True)
     
     st.subheader("Recommended Inspections")
     inspections = [
@@ -425,7 +497,7 @@ def show_maintenance_tab(data: dict):
 
     st.subheader("Lubrication Points")
     st.markdown("""
-        <div style="background-color: #f0f0f0; padding: 20px; border-radius: 5px;">
+        <div class="card">
             <p>An interactive diagram would be displayed here, showing the lubrication points on the turbine blade.</p>
         </div>
     """, unsafe_allow_html=True)
@@ -437,7 +509,7 @@ def show_maintenance_tab(data: dict):
         'Lead Time': ['2 weeks', '1 week', '3 weeks', '4 weeks'],
         'Inventory Status': ['In Stock', 'Low Stock', 'In Stock', 'Out of Stock']
     })
-    st.dataframe(spare_parts)
+    st.table(spare_parts)
     st.download_button("Download Full Spare Parts Catalog", data=spare_parts.to_csv(index=False), file_name="spare_parts_catalog.csv", mime="text/csv")
 
 def show_documentation_tab():
@@ -450,9 +522,13 @@ def show_documentation_tab():
         {"name": "Installation Guide", "description": "Step-by-step installation instructions"},
     ]
     for doc in tech_docs:
-        st.markdown(f"**{doc['name']}**: {doc['description']}")
-        st.download_button(f"Download {doc['name']}", data=f"Content of {doc['name']}", file_name=f"{doc['name'].lower().replace(' ', '_')}.pdf", mime="application/pdf")
-        st.markdown("---")
+        st.markdown(f"""
+            <div class="card">
+                <h4>{doc['name']}</h4>
+                <p>{doc['description']}</p>
+                <button class="streamlit-button primary">Download {doc['name']}</button>
+            </div>
+        """, unsafe_allow_html=True)
 
     st.subheader("Compliance & Certification")
     compliance_docs = [
@@ -461,13 +537,17 @@ def show_documentation_tab():
         {"name": "Safety Certification", "validity": "Valid until 2025-06-30"},
     ]
     for doc in compliance_docs:
-        st.markdown(f"**{doc['name']}** - {doc['validity']}")
-        st.download_button(f"Download {doc['name']}", data=f"Content of {doc['name']}", file_name=f"{doc['name'].lower().replace(' ', '_')}.pdf", mime="application/pdf")
-        st.markdown("---")
+        st.markdown(f"""
+            <div class="card">
+                <h4>{doc['name']}</h4>
+                <p>{doc['validity']}</p>
+                <button class="streamlit-button primary">Download {doc['name']}</button>
+            </div>
+        """, unsafe_allow_html=True)
 
     st.subheader("Training Resources")
     st.markdown("""
-        <div style="background-color: #f0f0f0; padding: 20px; border-radius: 5px;">
+        <div class="card">
             <h4 style="margin-top: 0;">Available Training Modules:</h4>
             <ul>
                 <li>Basic Maintenance Procedures</li>
@@ -481,7 +561,7 @@ def show_documentation_tab():
 
 def show_footer():
     st.markdown("""
-        <div style="background-color:#f0f0f0; padding:20px; border-radius:5px; margin-top:30px;">
+        <div class="footer">
             <h3>Additional Resources</h3>
             <ul>
                 <li><a href="#">Turbine Blade Performance Optimization Guide</a></li>
