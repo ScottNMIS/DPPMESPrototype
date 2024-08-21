@@ -51,6 +51,22 @@ def create_dpp(title, qrcode):
     except Exception as e:
         st.error(f"Error: {str(e)}")
 
+# Function to get all Dpps with success/failure feedback
+def get_all_dpps():
+    try:
+        # Send GET request to FastAPI to get all Dpps
+        response = requests.get(DPP_API_URL)
+        
+        # Check for a successful response
+        if response.status_code == 200:
+            return response.json()  # Return the list of Dpps
+        else:
+            st.error(f"Failed to fetch Dpps. Status code: {response.status_code}")
+            st.json(response.json())  # Display the error response JSON
+    except Exception as e:
+        st.error(f"Error fetching Dpps: {str(e)}")
+        return None
+
 # Streamlit app to input email and password for user creation
 def user_creation_ui():
     st.subheader("Create a New User")
@@ -168,6 +184,16 @@ def main_test():
         # Submit Button to send the dummy data
         if st.button("Submit Data"):
             submit_dummy_data(st.session_state.dummy_data)
+    
+    # Add a button to fetch and display all DPPs
+    fetch_dpps = st.button("Fetch All DPPs")
+    
+    if fetch_dpps:
+        all_dpps = get_all_dpps()
+        if all_dpps:
+            st.subheader("Fetched DPPs")
+            for dpp in all_dpps:
+                st.write(f"Title: {dpp['title']}")
 
 # Function call for testing in standalone mode
 if __name__ == "__main__":

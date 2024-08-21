@@ -5,9 +5,10 @@ import os
 import matplotlib.pyplot as plt
 from openai import OpenAI
 from datetime import datetime
+from decouple import config  # Add this to load environment variables
 
-# Set up your OpenAI API key
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+# Set up your OpenAI API key using the .env file
+client = OpenAI(api_key=config('OPENAI_API_KEY'))
 
 # Define your functions (unchanged)
 functions = [
@@ -80,7 +81,7 @@ def show_top_bar():
     st.markdown(f"""
         <div class="top-bar">
             <div class="user-info">Logged in as: <strong>{account_name}</strong></div>
-            <a href="#" class="button">Request Access</a>
+            <a href="#" class="button" onclick="window.location.href='/request_access';">Request Access</a>
         </div>
         <style>
         .top-bar {{
@@ -115,6 +116,11 @@ def show_top_bar():
         }}
         </style>
     """, unsafe_allow_html=True)
+
+    # Handle the request access button click by navigating to the advanced visualisation page
+    if st.button('Request Access'):
+        st.session_state.selected_page = "Advanced Visualisation"
+        st.rerun()
 
 # Example for setting account_name
 st.session_state['account_name'] = 'John Doe'
