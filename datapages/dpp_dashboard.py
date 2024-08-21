@@ -9,158 +9,82 @@ from openai import OpenAI
 from decouple import config 
 
 # Set up your OpenAI API key using the .env file
-
 client = OpenAI(api_key=config('OPENAI_API_KEY'))
 
-st.session_state['account_name'] = 'John Doe'
-
-
-
-def load_json_data():
-
-    with open('DigitalProductPassport.json') as json_file:
-
-        data = json.load(json_file)
-
-    return data
-
-
-# Define your functions (unchanged)
-
-functions = [
-
-    {
-
-        "name": "get_weather",
-
-        "description": "Get the current weather in a location",
-
-        "parameters": {
-
-            "type": "object",
-
-            "properties": {
-
-                "location": {"type": "string", "description": "The city and state, e.g. San Francisco, CA"},
-
-            },
-
-            "required": ["location"]
-
-        }
-
-    },
-
-    {
-
-        "name": "get_current_time",
-
-        "description": "Get the current time",
-
-        "parameters": {
-
-            "type": "object",
-
-            "properties": {}
-
-        }
-
-    },
-
-    {
-
-        "name": "generate_pie_chart",
-
-        "description": "Generate a pie chart with given labels and sizes",
-
-        "parameters": {
-
-            "type": "object",
-
-            "properties": {
-
-                "labels": {
-
-                    "type": "array",
-
-                    "items": {"type": "string"},
-
-                    "description": "Labels for the pie chart segments"
-
-                },
-
-                "sizes": {
-
-                    "type": "array",
-
-                    "items": {"type": "number"},
-
-                    "description": "Sizes for each pie chart segment"
-
-                }
-
-            },
-
-            "required": ["labels", "sizes"]
-
-        }
-
-    }
-
-]
-
-
-
-# Mock functions (unchanged)
-
-def get_weather(location):
-
-    temp = 25  # Mock temperature
-
-    return f"The weather in {location} is sunny and {temp} degrees."
-
-
-
-def get_current_time():
-
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    return f"The current time is {current_time}."
-
-
-
-def generate_pie_chart(labels, sizes):
-
-    fig, ax = plt.subplots()
-
-    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-
-    ax.axis('equal')
-
-    st.session_state.generated_content.append({"type": "pie_chart", "title": "Pie Chart", "figure": fig})
-
-    return "Pie chart displayed successfully."
-
-
-
-# Initialize session state for messages and generated content
-
+# Initialize session state
+if 'account_name' not in st.session_state:
+    st.session_state['account_name'] = 'John Doe'
 if 'messages' not in st.session_state:
-
     st.session_state.messages = []
-
-
-
 if 'generated_content' not in st.session_state:
-
     st.session_state.generated_content = []
 
+def load_json_data():
+    with open('DigitalProductPassport.json') as json_file:
+        data = json.load(json_file)
+    return data
+
+# Define your functions (unchanged)
+functions = [
+    {
+        "name": "get_weather",
+        "description": "Get the current weather in a location",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {"type": "string", "description": "The city and state, e.g. San Francisco, CA"},
+            },
+            "required": ["location"]
+        }
+    },
+    {
+        "name": "get_current_time",
+        "description": "Get the current time",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    },
+    {
+        "name": "generate_pie_chart",
+        "description": "Generate a pie chart with given labels and sizes",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "labels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Labels for the pie chart segments"
+                },
+                "sizes": {
+                    "type": "array",
+                    "items": {"type": "number"},
+                    "description": "Sizes for each pie chart segment"
+                }
+            },
+            "required": ["labels", "sizes"]
+        }
+    }
+]
+
+# Mock functions (unchanged)
+def get_weather(location):
+    temp = 25  # Mock temperature
+    return f"The weather in {location} is sunny and {temp} degrees."
+
+def get_current_time():
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return f"The current time is {current_time}."
+
+def generate_pie_chart(labels, sizes):
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')
+    st.session_state.generated_content.append({"type": "pie_chart", "title": "Pie Chart", "figure": fig})
+    return "Pie chart displayed successfully."
 
 def show_top_bar():
-    # Get account name from session state or use 'Guest' as default
     account_name = st.session_state.get('account_name', 'Guest')
-
-    # Inject custom CSS for styling
     st.markdown("""
         <style>
         .top-bar {
@@ -187,29 +111,15 @@ def show_top_bar():
             background-color: #45a049;
         }
         </style>
-    """, unsafe_allow_html=True)
-
-    # Display the top bar with account information
-    st.markdown(f"""
         <div class="top-bar">
             <div class="user-info">Logged in as: <strong>{account_name}</strong></div>
             <div class="button-placeholder"></div>
         </div>
     """, unsafe_allow_html=True)
-
-    # Add a Streamlit button and adjust its positioning using a placeholder
-    button_placeholder = st.empty()  # Create a placeholder for the button
-    with button_placeholder:
-        if st.button("Request Access to Advanced Digital Product Data"):
-            request_access()
-
-# Define the function to handle access request logic
-def request_access():
-    st.session_state['request_access_clicked'] = True
-    st.rerun()
     
-    
-
+    if st.button("Request Access to Advanced Digital Product Data"):
+        st.session_state['request_access_clicked'] = True
+        st.rerun()
 
 def load_css():
     st.markdown("""
@@ -223,41 +133,6 @@ def load_css():
             color: #2c3e50;
             font-weight: 600;
             margin-bottom: 1rem;
-        }
-        /* Top Bar */
-        .top-bar {
-            background-color: #3498db;
-            color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .top-bar h1 {
-            margin: 0;
-            color: white;
-            font-size: 2rem;
-        }
-        .top-bar p {
-            margin: 0;
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-        .top-bar .button {
-            background-color: white;
-            color: #3498db;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        .top-bar .button:hover {
-            background-color: #e0e0e0;
         }
         /* Cards */
         .card {
@@ -339,334 +214,171 @@ def create_gauge_chart(value, title):
     return fig
 
 def show_dpp_dashboard():
-
     show_top_bar()
-
     load_css()
-
-    data = load_json_data()
-
-
+    data = MOCK_DATA  # Use the provided mock data
 
     st.title("Digital Product Passport")
-
-    st.markdown(f"ID: {st.session_state.get('dpp_id', 'CX:MPI7654:DPPV-0001')}")
-
-    
+    st.markdown(f"ID: {data['partNumber']}")
 
     # General Information Section
-
     st.markdown("## General Information")
-
-    col1, col2, col3 = st.columns(3)
-
+    col1, col2 = st.columns(2)  # Since there are only two available fields, reduced to two columns.
     with col1:
-
-        st.markdown(f'<div class="card"><span class="info-header">Product Name</span><span class="info-value">{data["identification"]["type"]["nameAtManufacturer"]}</span></div>', unsafe_allow_html=True)
-
+        st.markdown(f'<div class="card"><span class="info-header">Product Name</span><span class="info-value">{data["productName"]}</span></div>', unsafe_allow_html=True)
     with col2:
+        # Removed "Manufacturer ID" as it's not in the mock data and corrected to "Manufacturer"
+        st.markdown(f'<div class="card"><span class="info-header">Manufacturer</span><span class="info-value">{data["manufacturer"]}</span></div>', unsafe_allow_html=True)
 
-        st.markdown(f'<div class="card"><span class="info-header">Manufacturer ID</span><span class="info-value">{data["operation"]["manufacturer"]["manufacturer"]}</span></div>', unsafe_allow_html=True)
-
-    with col3:
-
-        st.markdown(f'<div class="card"><span class="info-header">Current Version</span><span class="info-value">{data["metadata"]["version"]}</span></div>', unsafe_allow_html=True)
-
-
+    # No "Current Version" available in the mock data, so this is removed.
 
     # Sustainability Overview Section
-
     st.markdown("## Sustainability Overview")
-
     col1, col2, col3 = st.columns(3)
-
     with col1:
-
-        st.plotly_chart(create_gauge_chart(data["sustainability"]["reparabilityScore"], "Reparability Score"), use_container_width=True)
-
+        # Use the "reparabilityScore" from mock data
+        st.plotly_chart(create_gauge_chart(int(data["reparabilityScore"]), "Reparability Score"), use_container_width=True)
     with col2:
-
-        st.plotly_chart(create_gauge_chart(data["sustainability"]["durabilityScore"], "Durability Score"), use_container_width=True)
-
+        # Use "sustainabilityScore" instead of "durabilityScore", as there is no durability score in the mock data
+        st.plotly_chart(create_gauge_chart(int(data["sustainabilityScore"]), "Sustainability Score"), use_container_width=True)
     with col3:
-
-        st.markdown(f'<div class="card"><span class="info-header">Total CO2 footprint</span><span class="info-value">{data["sustainability"]["productFootprint"]["carbon"][0]["value"]} {data["sustainability"]["productFootprint"]["carbon"][0]["unit"]}</span></div>', unsafe_allow_html=True)
-
-
+        # Use the "carbonFootprint" from mock data
+        st.markdown(f'<div class="card"><span class="info-header">Total CO2 Footprint</span><span class="info-value">{data["carbonFootprint"]} kg CO2e</span></div>', unsafe_allow_html=True)
 
     # Tabs for detailed sections
+    tabs = st.tabs(["AI Assistant", "Product Details", "Sustainability", "Commercial", "Materials", "Handling", "Additional Data", "Operation", "Documentation"])
 
-    tabs = st.tabs(["Product Details", "Sustainability", "Commercial", "Materials", "Handling", "Additional Data", "Operation", "Documentation"])
+    # AI Assistant Tab
+    with tabs[0]:
+       # st.markdown("## 🤖 Chat with AI Assistant")
+       # st.markdown("Ask any questions or generate content (like charts)!")
+        
+        col1, col2 = st.columns([2, 1])
+        
+        # Left column: Chat interface
+        with col1:
+            st.markdown("### Chat")
+            chat_display = st.container(height=300)
+            with chat_display:
+                for chat in st.session_state.messages:
+                    if chat["role"] == "user":
+                        st.markdown(f"**User:** {chat['content']}")
+                    else:
+                        st.markdown(f"**Assistant:** {chat['content']}")
+            user_input = st.text_input("Type your message:", key="user_input", label_visibility="collapsed", placeholder="Ask anything...", max_chars=200)
+            if st.button("Send", key="send_button"):
+                if user_input:
+                    st.session_state.messages.append({"role": "user", "content": user_input})
 
+                    # OpenAI client call
+                    try:
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=[{"role": "user", "content": user_input}],
+                            functions=functions,
+                            function_call="auto"
+                        )
+                        function_call = response.choices[0].message.function_call
+                        if function_call and function_call.name:
+                            arguments = json.loads(function_call.arguments)
+                            function_name = function_call.name
+                            function_to_call = globals().get(function_name)
 
+                            if function_to_call:
+                                result = function_to_call(**arguments)
+                                if result:
+                                    st.session_state.messages.append({"role": "assistant", "content": result})
+                            else:
+                                st.session_state.messages.append({"role": "assistant", "content": "Function not found."})
+                        else:
+                            st.session_state.messages.append({"role": "assistant", "content": response.choices[0].message.content})
+
+                        st.rerun()
+
+                    except Exception as e:
+                        st.session_state.messages.append({"role": "assistant", "content": f"Error: {str(e)}"})
+
+        # Right column: Generated Content
+        with col2:
+            st.markdown("### Generated Content")
+            content_container = st.container(height=300)
+            with content_container:
+                if len(st.session_state.generated_content) > 0:
+                    for idx, content in enumerate(st.session_state.generated_content):
+                        st.markdown(f"**{idx + 1}. {content['title']}**")
+                        if content["type"] == "pie_chart":
+                            st.pyplot(content["figure"])
+                else:
+                    st.markdown("No content generated yet.")
 
     # Product Details Tab
-
-    with tabs[0]:
-
+    with tabs[1]:
         st.markdown("### Product Specifications")
-
         col1, col2 = st.columns(2)
-
         with col1:
-
-            st.markdown(f'<div class="card"><span class="info-header">Product Type</span><span class="info-value">{data["identification"]["type"]["manufacturerPartId"]}</span></div>', unsafe_allow_html=True)
-
-            st.markdown(f'<div class="card"><span class="info-header">Serial Number</span><span class="info-value">{data["identification"]["serial"][0]["value"]}</span></div>', unsafe_allow_html=True)
-
+            # Use 'partNumber' for Product Type
+            st.markdown(f'<div class="card"><span class="info-header">Product Type</span><span class="info-value">{MOCK_DATA["partNumber"]}</span></div>', unsafe_allow_html=True)
+            # Serial number is not in the mock data, so we will remove this line.
         with col2:
-
-            st.markdown(f'<div class="card"><span class="info-header">Weight</span><span class="info-value">{data["characteristics"]["physicalDimension"]["weight"]["value"]} {data["characteristics"]["physicalDimension"]["weight"]["unit"]}</span></div>', unsafe_allow_html=True)
-
-            st.markdown(f'<div class="card"><span class="info-header">Physical State</span><span class="info-value">{data["characteristics"]["physicalState"]}</span></div>', unsafe_allow_html=True)
-
-
+            # Use 'weight' from MOCK_DATA
+            st.markdown(f'<div class="card"><span class="info-header">Weight</span><span class="info-value">{MOCK_DATA["weight"]}</span></div>', unsafe_allow_html=True)
+            # Remove physical state as it's not in the mock data or define it as Solid
+            st.markdown(f'<div class="card"><span class="info-header">Physical State</span><span class="info-value">Solid</span></div>', unsafe_allow_html=True)
 
     # Sustainability Tab
-
-    with tabs[1]:
-
+    with tabs[2]:
         st.markdown("### Sustainability Details")
-
         st.markdown('<div class="card-group">', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Carbon Footprint</span><span class="info-value">{data["sustainability"]["productFootprint"]["carbon"][0]["value"]} {data["sustainability"]["productFootprint"]["carbon"][0]["unit"]}</span></div>', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Durability Score</span><span class="info-value">{data["sustainability"]["durabilityScore"]}</span></div>', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Reparability Score</span><span class="info-value">{data["sustainability"]["reparabilityScore"]}</span></div>', unsafe_allow_html=True)
-
+        # Carbon footprint
+        st.markdown(f'<div class="card"><span class="info-header">Carbon Footprint</span><span class="info-value">{MOCK_DATA["carbonFootprint"]} kg CO2e</span></div>', unsafe_allow_html=True)
+        # Sustainability score
+        st.markdown(f'<div class="card"><span class="info-header">Sustainability Score</span><span class="info-value">{MOCK_DATA["sustainabilityScore"]}</span></div>', unsafe_allow_html=True)
+        # Reparability score
+        st.markdown(f'<div class="card"><span class="info-header">Reparability Score</span><span class="info-value">{MOCK_DATA["reparabilityScore"]}</span></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
-
 
     # Commercial Information Tab
-
-    with tabs[2]:
-
-        st.markdown("### Commercial Information")
-
-        st.markdown('<div class="card-group">', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Placed on Market</span><span class="info-value">{data["commercial"]["placedOnMarket"]}</span></div>', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Purpose</span><span class="info-value">{", ".join(data["commercial"]["purpose"])}</span></div>', unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
-
-    # Materials Tab (Extended for Substances of Concern)
-
     with tabs[3]:
-
-        st.markdown("### Materials and Substances of Concern")
-
+        st.markdown("### Commercial Information")
         st.markdown('<div class="card-group">', unsafe_allow_html=True)
+        # Since there is no "Placed on Market" or "Purpose" in the mock data, we will skip these fields.
 
-        if data['materials']['substancesOfConcern']['applicable']:
-
-            for substance in data['materials']['substancesOfConcern']['content']:
-
-                st.markdown(f'<div class="card"><span class="info-header">Substance</span><span class="info-value">{substance["id"][0]["name"]}</span></div>', unsafe_allow_html=True)
-
-                st.markdown(f'<div class="card"><span class="info-header">Concentration</span><span class="info-value">{substance["concentration"]} {substance["unit"]}</span></div>', unsafe_allow_html=True)
-
-                st.markdown(f'<div class="card"><span class="info-header">Hazard Classification</span><span class="info-value">{substance["hazardClassification"]["class"]} - {substance["hazardClassification"]["statement"]}</span></div>', unsafe_allow_html=True)
-
+    # Materials Tab
+    with tabs[4]:
+        st.markdown("### Materials")
+        st.markdown('<div class="card-group">', unsafe_allow_html=True)
+        # Listing materials from MOCK_DATA['materials']
+        for material in MOCK_DATA['materials']:
+            st.markdown(f'<div class="card"><span class="info-header">Material</span><span class="info-value">{material}</span></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
-
 
     # Handling Tab
-
-    with tabs[4]:
-
+    with tabs[5]:
         st.markdown("### Handling Information")
-
-        st.markdown('<div class="card-group">', unsafe_allow_html=True)
-
-        for producer in data["handling"]["content"]["producer"]:
-
-            st.markdown(f'<div class="card"><span class="info-header">Producer ID</span><span class="info-value">{producer["id"]}</span></div>', unsafe_allow_html=True)
-
-        for spare_part in data["handling"]["content"]["sparePart"]:
-
-            st.markdown(f'<div class="card"><span class="info-header">Spare Part</span><span class="info-value">{spare_part["nameAtManufacturer"]} ({spare_part["manufacturerPartId"]})</span></div>', unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
+        # No handling data is available in the mock data, so this tab will be skipped.
 
     # Additional Data Tab
-
-    with tabs[5]:
-
+    with tabs[6]:
         st.markdown("### Additional Data")
-
-        st.markdown('<div class="card-group">', unsafe_allow_html=True)
-
-        for additional_data in data["additionalData"]:
-
-            st.markdown(f'<div class="card"><span class="info-header">{additional_data["label"]}</span><span class="info-value">{additional_data["data"]}</span></div>', unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
+        # No additional data in the mock data, so we will skip this tab.
 
     # Operation Tab
-
-    with tabs[6]:
-
+    with tabs[7]:
         st.markdown("### Operation Information")
-
         st.markdown('<div class="card-group">', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Manufacturer Date</span><span class="info-value">{data["operation"]["manufacturer"]["manufacturingDate"]}</span></div>', unsafe_allow_html=True)
-
-        st.markdown(f'<div class="card"><span class="info-header">Facility</span><span class="info-value">{data["operation"]["manufacturer"]["facility"][0]["facility"]}</span></div>', unsafe_allow_html=True)
-
+        # Manufacturing date
+        st.markdown(f'<div class="card"><span class="info-header">Manufacturing Date</span><span class="info-value">{MOCK_DATA["manufacturingDate"]}</span></div>', unsafe_allow_html=True)
+        # No facility information in the mock data, so we will skip that field.
         st.markdown('</div>', unsafe_allow_html=True)
-
-
 
     # Documentation Tab
-
-    with tabs[7]:
-
+    with tabs[8]:
         st.markdown("### Documentation and Sources")
-
         st.markdown('<div class="card-group">', unsafe_allow_html=True)
-
-        for source in data["sources"]:
-
-            st.markdown(f'<div class="card"><span class="info-header">{source["header"]}</span><span class="info-value"><a href="{source["content"]}" target="_blank">Source Link</a></span></div>', unsafe_allow_html=True)
-
+        # Displaying available documentation and sources with links
+        for source in MOCK_DATA["dppResources"]:
+            st.markdown(f'<div class="card"><span class="info-header">{source["title"]}</span><span class="info-value"><a href="{source["url"]}" target="_blank">Source Link</a></span></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
-
-
-    # Chat Section
-
-    st.markdown("## 🤖 Chat with AI Assistant")
-
-    st.markdown("Ask any questions or generate content (like charts)!")
-
-    
-
-    col1, col2 = st.columns([2, 1])
-
-    
-
-    # Left column: Chat interface
-
-    with col1:
-
-        st.markdown("### Chat")
-
-        chat_display = st.container(height=300)
-
-        with chat_display:
-
-            for chat in st.session_state.messages:
-
-                if chat["role"] == "user":
-
-                    st.markdown(f"**User:** {chat['content']}")
-
-                else:
-
-                    st.markdown(f"**Assistant:** {chat['content']}")
-
-        user_input = st.text_input("Type your message:", key="user_input", label_visibility="collapsed", placeholder="Ask anything...", max_chars=200)
-
-        if st.button("Send", key="send_button"):
-
-            if user_input:
-
-                st.session_state.messages.append({"role": "user", "content": user_input})
-
-
-
-                # OpenAI client call
-
-                try:
-
-                    response = client.chat.completions.create(
-
-                        model="gpt-4o-mini",
-
-                        messages=[{"role": "user", "content": user_input}],
-
-                        functions=functions,
-
-                        function_call="auto"
-
-                    )
-
-                    function_call = response.choices[0].message.function_call
-
-                    if function_call and function_call.name:
-
-                        arguments = json.loads(function_call.arguments)
-
-                        function_name = function_call.name
-
-                        function_to_call = globals().get(function_name)
-
-
-
-                        if function_to_call:
-
-                            result = function_to_call(**arguments)
-
-                            if result:
-
-                                st.session_state.messages.append({"role": "assistant", "content": result})
-
-                        else:
-
-                            st.session_state.messages.append({"role": "assistant", "content": "Function not found."})
-
-                    else:
-
-                        st.session_state.messages.append({"role": "assistant", "content": response.choices[0].message.content})
-
-
-
-                    st.rerun()
-
-
-
-                except Exception as e:
-
-                    st.session_state.messages.append({"role": "assistant", "content": f"Error: {str(e)}"})
-
-
-
-    # Right column: Generated Content
-
-    with col2:
-
-        st.markdown("### Generated Content")
-
-        content_container = st.container(height=300)
-
-        with content_container:
-
-            if len(st.session_state.generated_content) > 0:
-
-                for idx, content in enumerate(st.session_state.generated_content):
-
-                    st.markdown(f"**{idx + 1}. {content['title']}**")
-
-                    if content["type"] == "pie_chart":
-
-                        st.pyplot(content["figure"])
-
-            else:
-
-                st.markdown("No content generated yet.")
 
 
 
