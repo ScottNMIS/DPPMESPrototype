@@ -33,71 +33,33 @@ def main():
         login_details = get_login_details()
         if login_details["is_logged_in"]:
             st.sidebar.title(f"Welcome, {login_details['username']}!")
-            if st.sidebar.button("Logout"):
-                logout()
-                st.rerun()
             
             selected = option_menu(
                 "Main Menu", 
-                ["Scan QR Code", "Create DPP"],
-                icons=['qr-code', 'plus-square'],
+                ["Scan QR Code", "Create DPP", "Dashboard"],
+                icons=['qr-code', 'plus-square', 'house'],
                 menu_icon="cast", 
                 default_index=0
             )
             
-            # Additional options for admin or advanced features
-            with st.expander("Advanced Options"):
-                advanced_option = option_menu(
-                    "Advanced",
-                    ["Dashboard", "Advanced Dashboard", "Data Visualisation", "Data Input", "Advanced Visualisation", "3D Model Viewer", "Factory Data", "Sustainability Info", "Company Info", "Customisation", "Keycloak Test", "DPP Management"],
-                    icons=['house', 'input-cursor-text', 'bar-chart-line', 'file-earmark-plus', 'graph-up', 'cube', 'database', 'leaf', 'building', 'wrench', 'robot', 'file-code'],
-                    menu_icon="gear"
-                    # Removed default_index parameter
-                )
-                if advanced_option:
-                    selected = advanced_option
+            if st.sidebar.button("Logout"):
+                logout()
+                st.rerun()
         else:
             selected = "Login"
 
-        # Only update the selected page if a valid option was chosen
-        if selected:
-            st.session_state['selected_page'] = selected
+        st.session_state['selected_page'] = selected
 
     # Page routing
     if not login_details["is_logged_in"]:
         main_login()
     else:
-        # Use get() method with a default value to avoid KeyError
-        current_page = st.session_state.get('selected_page', 'Scan QR Code')
-        
-        if current_page == "Scan QR Code":
+        if st.session_state['selected_page'] == "Scan QR Code":
             show_scan_qr_page()
-        elif current_page == "Create DPP":
+        elif st.session_state['selected_page'] == "Create DPP":
             show_create_dpp_page()
-        elif current_page == "Dashboard":
+        elif st.session_state['selected_page'] == "Dashboard":
             show_dpp_dashboard()
-        elif current_page == "Advanced Dashboard":
-            show_advanced_dpp_dashboard()
-        elif current_page == "Data Visualisation":
-            show_data_visualisation()
-        elif current_page == "Data Input":
-            show_data_input_page()
-        elif current_page == "Advanced Visualisation":
-            show_advanced_visualisation()
-        elif current_page == "3D Model Viewer":
-            show_model_viewer()
-        elif current_page == "Factory Data":
-            main_test()
-        elif current_page == "Sustainability Info":
-            show_sustainability_info()
-        elif current_page == "Company Info":
-            show_company_info()
-        elif current_page == "Keycloak Test":
-            show_keycloak_test()
-        elif current_page == "DPP Management":
-            show_dpp_management()
-        else:
-            st.warning("Please select a page from the sidebar.")
 
     st.sidebar.info('Developed by National Manufacturing Institute Scotland')
 
