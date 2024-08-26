@@ -15,6 +15,7 @@ def render_sidebar():
     with st.sidebar:
         login_details = get_login_details()
         if login_details["is_logged_in"]:
+
             st.sidebar.title(f"Welcome, {login_details['username']}!")
             
             selected = option_menu(
@@ -33,13 +34,15 @@ def render_sidebar():
         else:
             return "Login"
 
+        st.sidebar.info('Developed by National Manufacturing Institute Scotland')
+
 def main():
     init_session_state()  # Initialize session state
     
     load_css()
     
     # Display the top banner
-    top_banner_main()
+    #top_banner_main()
 
     # Render sidebar and get selected option
     selected = render_sidebar()
@@ -56,7 +59,7 @@ def main():
         elif selected == "Dashboard":
             show_dpp_dashboard()
 
-    st.sidebar.info('Developed by National Manufacturing Institute Scotland')
+
 
     show_footer(MOCK_DATA)
 
