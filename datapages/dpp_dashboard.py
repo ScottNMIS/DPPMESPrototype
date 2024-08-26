@@ -14,12 +14,7 @@ from datapages.dataholder import MOCK_DATA
 client = OpenAI(api_key=config('OPENAI_API_KEY'))
 
 
-# Initialize session state for messages and generated content
-if 'messages' not in st.session_state:
-    st.session_state.messages = []
 
-if 'generated_content' not in st.session_state:
-    st.session_state.generated_content = []
 
 
 # Initialize session state
@@ -187,6 +182,14 @@ def create_gauge_chart(value, title):
     return fig
 
 def show_dpp_dashboard():
+
+    # Initialize session state for messages and generated content
+    if 'messages' not in st.session_state:
+        st.session_state.messages = []
+
+    if 'generated_content' not in st.session_state:
+        st.session_state.generated_content = []
+
     #show_top_bar()
     if st.button("Request Access to Advanced Digital Product Data"):
         st.session_state['request_access_clicked'] = True
