@@ -505,7 +505,7 @@ def show_overview_tab(data: dict):
 
 
 def show_advanced_dpp_dashboard():
-    load_css()
+    #load_css()
     
     data = MOCK_DATA
     

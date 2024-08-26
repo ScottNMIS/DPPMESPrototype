@@ -1,4 +1,5 @@
 import streamlit as st
+from datapages.login import init_session_state, get_login_details, logout
 
 
 def show_footer(data: dict):
@@ -249,6 +250,15 @@ def add_navigation_buttons():
 def top_banner_main():
     load_button_css()
     st.markdown('<div class="top-banner-container">', unsafe_allow_html=True)
-    show_top_bar()
+    
+    login_details = get_login_details()
+    account_name = login_details["username"] if login_details["is_logged_in"] else "Guest"
+    
+    st.markdown(f"""
+        <div class="top-bar">
+            <div class="user-info">Logged in as: <strong>{account_name}</strong></div>
+        </div>
+    """, unsafe_allow_html=True)
+    
     add_navigation_buttons()
     st.markdown('</div>', unsafe_allow_html=True)

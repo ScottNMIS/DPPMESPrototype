@@ -13,6 +13,15 @@ from datapages.dataholder import MOCK_DATA
 # Set up your OpenAI API key using the .env file
 client = OpenAI(api_key=config('OPENAI_API_KEY'))
 
+
+# Initialize session state for messages and generated content
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+
+if 'generated_content' not in st.session_state:
+    st.session_state.generated_content = []
+
+
 # Initialize session state
 if 'account_name' not in st.session_state:
     st.session_state['account_name'] = 'John Doe'
