@@ -191,9 +191,9 @@ def show_dpp_dashboard():
         st.session_state.generated_content = []
 
     #show_top_bar()
-    if st.button("Request Access to Advanced Digital Product Data"):
-        st.session_state['request_access_clicked'] = True
-        st.rerun()
+    #if st.button("Request Access to Advanced Digital Product Data"):
+    #    st.session_state['request_access_clicked'] = True
+    #    st.rerun()
     load_css()
     data = MOCK_DATA  # Use the provided mock data
 

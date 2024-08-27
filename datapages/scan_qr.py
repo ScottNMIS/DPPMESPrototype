@@ -3,6 +3,14 @@ import cv2
 from pyzbar.pyzbar import decode
 import numpy as np
 
+# Function to check if a QR code is valid
+def is_qr_code_valid(qr_code_data):
+    """
+    This function checks if a scanned or entered QR code is valid. Need to validate.
+    """
+    # Placeholder for future logic. Right now, it always returns True.
+    return True
+
 def scan_qr_code(image):
     qr_codes = decode(image)
     if qr_codes:
@@ -24,24 +32,29 @@ def show_scan_qr_page():
             file_bytes = np.asarray(bytearray(qr_code_image.read()), dtype=np.uint8)
             img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
             qr_data = scan_qr_code(img)
+            
             if qr_data:
-                st.success("QR Code scanned successfully!")
-                st.session_state['dpp_data'] = qr_data
-                st.session_state['selected_page'] = "Dashboard"
-                st.rerun()
+                if is_qr_code_valid(qr_data):  # Use the new validation function
+                    st.success(f"QR Code scanned successfully! Data: {qr_data}")
+                    st.session_state['dpp_data'] = qr_data  # Store the actual QR code data
+                    st.session_state['is_qr_valid'] = True  # Set the flag to true for valid QR scan
+                    st.rerun()
+                else:
+                    st.error("The QR code is not valid. Please try again.")
             else:
-                st.error("No QR code detected. Please try again.")
+                st.error("No valid QR code detected. Please try again.")
     
     with tab2:
         st.subheader("Enter QR Code String")
         qr_string = st.text_input("Enter the QR code string")
         if st.button("Submit"):
             if qr_string:
-                st.session_state['dpp_data'] = qr_string
-                st.session_state['selected_page'] = "Dashboard"
-                st.rerun()
+                if is_qr_code_valid(qr_string):  # Use the new validation function
+                    st.session_state['dpp_data'] = qr_string
+                    st.session_state['is_qr_valid'] = True
+                    st.success(f"QR Code submitted successfully! Data: {qr_string}")
+                    st.rerun()
+                else:
+                    st.error("The QR code is not valid. Please try again.")
             else:
                 st.error("Please enter a valid QR code string.")
-
-if __name__ == "__main__":
-    show_scan_qr_page()

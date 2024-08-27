@@ -5,6 +5,7 @@ from streamlit_extras.app_logo import add_logo
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
+import re  # For email validation
 
 # Initialize cookie manager
 cookie_manager = CookieManager()
@@ -22,11 +23,11 @@ def init_session_state():
             st.session_state[var] = default_value
 
 # Function to authenticate user via FastAPI
-def authenticate_user(username, password):
+def authenticate_user(email, password):
     url = "http://130.159.132.19:8000/token"  # Replace with your FastAPI login endpoint
     payload = {
         "grant_type": "password",
-        "username": username,
+        "username": email,
         "password": password
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -47,20 +48,27 @@ def register_user(email, password):
     }
     response = requests.post(url, json=payload)
     
-    return response.status_code == 201
+    # Check if registration was successful
+    if response.status_code == 201:
+        return True  # Registration successful
+    elif response.status_code == 422:
+        # This error often occurs when validation fails (e.g., email already exists)
+        return {"error": "Validation Error. Please check the data provided."}
+    else:
+        return {"error": "Failed to register user. Please try again."}
 
 # Function to save login info to session state and cookies
-def save_login_info(username, access_token):
+def save_login_info(email, access_token):
     st.session_state['is_logged_in'] = True
     st.session_state['access_token'] = access_token
-    st.session_state['username'] = username
+    st.session_state['username'] = email
     st.session_state['selected_page'] = "Scan QR Code"  # Set default page after login
     
     # Save login state in cookies
     cookie_manager.set(
         "login_info",
         {
-            "username": username,
+            "username": email,
             "access_token": access_token,
             "is_logged_in": "True"
         },
@@ -98,6 +106,11 @@ def get_login_details():
         "access_token": st.session_state.get('access_token', None)
     }
 
+# Helper function to validate email format
+def is_valid_email(email):
+    email_regex = r'^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    return re.match(email_regex, email)
+
 # Login and Register screens
 def show_login_register():
     st.title("Digital Product Passport Scanner")
@@ -107,27 +120,40 @@ def show_login_register():
     
     with tab1:
         st.subheader("Login")
-        username = st.text_input("Username", key="login_username")
+        email = st.text_input("Email", key="login_email")
         password = st.text_input("Password", type="password", key="login_password")
         
         if st.button("Login", key="login_button"):
-            access_token = authenticate_user(username, password)
-            if access_token:
-                save_login_info(username, access_token)
-                st.success("Logged in successfully")
-                st.rerun()
+            if not is_valid_email(email):
+                st.error("Please enter a valid email address.")
             else:
-                st.error("Invalid username or password")
+                access_token = authenticate_user(email, password)
+                if access_token:
+                    save_login_info(email, access_token)
+                    st.success("Logged in successfully")
+                    st.rerun()
+                else:
+                    st.error("Invalid email or password")
 
     with tab2:
         st.subheader("Register")
         email = st.text_input("Email", key="register_email")
         password = st.text_input("Password", type="password", key="register_password")
+        
         if st.button("Register", key="register_button"):
-            if register_user(email, password):
-                st.success("User registered successfully. Please login.")
+            if not is_valid_email(email):
+                st.error("Please enter a valid email address.")
+            elif len(password) < 5:
+                st.error("Password must be at least 5 characters long.")
             else:
-                st.error("Failed to register user. Please try again.")
+                registration_result = register_user(email, password)
+                
+                if registration_result is True:
+                    st.success("User registered successfully. Please login.")
+                elif isinstance(registration_result, dict) and "error" in registration_result:
+                    st.error(registration_result["error"])
+                else:
+                    st.error("An unexpected error occurred. Please try again.")
 
 # QR Scanner
 def show_qr_scanner():
