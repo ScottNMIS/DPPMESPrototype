@@ -1,19 +1,50 @@
 import streamlit as st
 from datapages.login import init_session_state, get_login_details, logout
+from datetime import date
+
+import os
 
 
-def show_footer(data: dict):
-    st.markdown(f"""
-        <div class="footer">
-            <h3>Digital Product Passport Resources</h3>
-            <ul>
-                {"".join(f'<li><a href="{resource["url"]}">{resource["title"]}</a></li>' for resource in data['dppResources'])}
-            </ul>
-            <p>Last Updated: 2024-08-21 | <a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
-            <p>For technical support, please contact: {data['contactInfo']['email']} | {data['contactInfo']['phone']}</p>
-            <p>Visit our website: <a href="{data['contactInfo']['website']}">{data['contactInfo']['website']}</a></p>
+def show_footer():
+    # Get the absolute path to the image
+    base_path = "C:/Unity/DPPMESPrototype"  # This is your working directory
+    image_path = os.path.join(base_path, "images", "nmis_logo_small.png")  # Construct the full path
+
+    # Embed the image in the HTML using the absolute path
+    footer_html = f"""
+    <footer style="background-color: #00008B; color: white; padding: 40px 0; font-family: Arial, sans-serif;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1; padding: 0 20px;">
+                <img src="file:///{image_path}" alt="NMIS Logo" style="max-width: 100%; height: auto;">
+            </div>
+            <div style="flex: 2; padding: 0 20px; border-right: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="color: #3498db; margin-bottom: 20px;">About NMIS</h3>
+                <p>National Manufacturing Institute Scotland</p>
+                <p>Digital Factory</p>
+                <p>Address: 3 Netherton Square, Paisley, PA3 2EF</p>
+                <p>Phone: 0141 534 5200</p>
+                <p>Email: afrc-digital@strath.ac.uk</p>
+            </div>
+            <div style="flex: 2; padding: 0 20px;">
+                <h3 style="color: #3498db; margin-bottom: 20px;">ReMake Glasgow</h3>
+                <p>ReMake Glasgow is a project focused on driving innovation in sustainable manufacturing.</p>
+                <p>Our goal is to create circular manufacturing processes that minimise waste and maximise resource efficiency.</p>
+                <p>Through this initiative, we aim to foster sustainable production methods that contribute to Scotland's transition to net-zero by 2045.</p>
+                <p>Learn more about how ReMake Glasgow is shaping the future of manufacturing in Scotland.</p>
+            </div>
         </div>
-    """, unsafe_allow_html=True)
+        <div style="text-align: center; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px;">
+            <p>&copy; {date.today().year} National Manufacturing Institute Scotland. All rights reserved.</p>
+            <p>
+                <a href="#" style="color: #3498db; text-decoration: none;">Privacy Policy</a> | 
+                <a href="#" style="color: #3498db; text-decoration: none;">Terms of Use</a>
+            </p>
+            <p>Last Updated: {date.today().strftime('%Y-%m-%d')}</p>
+        </div>
+    </footer>
+    """
+    st.markdown(footer_html, unsafe_allow_html=True)
+
 
 def load_css():
     st.markdown("""

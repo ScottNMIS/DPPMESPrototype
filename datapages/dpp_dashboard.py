@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
-from datapages.dpp_advanceddashboard import show_advanced_dpp_dashboard, MOCK_DATA
+#from datapages.dpp_advanceddashboard import show_advanced_dpp_dashboard, MOCK_DATA
 from datetime import datetime
 import os
 from openai import OpenAI
@@ -12,9 +12,6 @@ from datapages.dataholder import MOCK_DATA
 
 # Set up your OpenAI API key using the .env file
 client = OpenAI(api_key=config('OPENAI_API_KEY'))
-
-
-
 
 
 # Initialize session state
@@ -358,8 +355,3 @@ def show_dpp_dashboard():
         for source in MOCK_DATA["dppResources"]:
             st.markdown(f'<div class="card"><span class="info-header">{source["title"]}</span><span class="info-value"><a href="{source["url"]}" target="_blank">Source Link</a></span></div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
-
-
-if __name__ == "__main__":
-    show_dpp_dashboard()

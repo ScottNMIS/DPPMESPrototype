@@ -1,4 +1,5 @@
 import requests
+import io
 
 # API base URL
 BASE_URL = "http://130.159.132.19:8000"
@@ -42,4 +43,33 @@ def get_machine_data():
         }
     }
 
-# Add other API call functions as needed
+def get_dpp_data():
+    """
+    Placeholder function to get pre-loaded DPP data
+    In the future, this should fetch data from a real API or database
+    """
+    # Mock data for demonstration
+    return {
+        "part_number": "PN12345",
+        "mass": 10.5,
+        "hardness": 150,
+        "part_description": "Sample part for demonstration",
+        "material": "Aluminum",
+        "start_time": "2024-08-27 09:00:00",
+        "end_time": "2024-08-27 11:30:00",
+        "mes_part_number": "MES-PN12345",
+        "operation_name": "Milling",
+        "operation_time": "2:30:00",
+        "machines_used": ["Machine001", "Machine003"],
+        "cad_file": io.BytesIO(b"Mock CAD file content").getvalue(),
+        "mbd_qif_file": io.BytesIO(b"Mock MBD QIF file content").getvalue(),
+        "pdf_3d": io.BytesIO(b"Mock 3D PDF content").getvalue(),
+        "cad_file_remake": io.BytesIO(b"Mock CAD file remake content").getvalue(),
+        "mbd_qif_file_remake": io.BytesIO(b"Mock MBD QIF file remake content").getvalue(),
+        "pdf_3d_remake": io.BytesIO(b"Mock 3D PDF remake content").getvalue(),
+        "excel_report": io.BytesIO(b"Mock Excel report content").getvalue(),
+        "repair_guideline": io.BytesIO(b"Mock repair guideline content").getvalue(),
+        "repair_images": [io.BytesIO(b"Mock repair image 1 content").getvalue(), io.BytesIO(b"Mock repair image 2 content").getvalue()],
+        "qif_results_file": io.BytesIO(b"Mock QIF results file content").getvalue(),
+        "audit_report": io.BytesIO(b"Mock audit report content").getvalue(),
+    }

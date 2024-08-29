@@ -1,7 +1,7 @@
 import streamlit as st
 from extra_streamlit_components import CookieManager
 import requests
-from streamlit_extras.app_logo import add_logo
+#from streamlit_extras.app_logo import add_logo
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
@@ -24,7 +24,7 @@ def init_session_state():
 
 # Function to authenticate user via FastAPI
 def authenticate_user(email, password):
-    url = "http://130.159.132.19:8000/token"  # Replace with your FastAPI login endpoint
+    url = "http://130.159.132.19:8000/token"
     payload = {
         "grant_type": "password",
         "username": email,
@@ -41,7 +41,7 @@ def authenticate_user(email, password):
 
 # Function to register a new user via FastAPI
 def register_user(email, password):
-    url = "http://130.159.132.19:8000/users"  # Replace with your FastAPI register endpoint
+    url = "http://130.159.132.19:8000/users"
     payload = {
         "email": email,
         "password": password
@@ -113,8 +113,8 @@ def is_valid_email(email):
 
 # Login and Register screens
 def show_login_register():
-    st.title("Digital Product Passport Scanner")
-    add_logo("https://www.example.com/logo.png")  # Replace with your logo URL
+    st.title("NMIS Digital Product Passport")
+   # add_logo("images/nmis_short.png")  # Replace with your logo URL
     
     tab1, tab2 = st.tabs(["Login", "Register"])
     

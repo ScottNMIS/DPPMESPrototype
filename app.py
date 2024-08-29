@@ -18,7 +18,7 @@ def render_sidebar():
         if login_details["is_logged_in"]:
             st.sidebar.title(f"Welcome, {login_details['username']}!")
             
-            # Display current QR code data if available
+            # Should display current QR code data if available
             if 'dpp_data' in st.session_state and st.session_state['dpp_data']:
                 st.sidebar.subheader("Current DPP Data")
                 dpp_data = st.session_state['dpp_data']
@@ -78,7 +78,7 @@ def main():
         elif selected == "Input Data" and 'is_qr_valid' in st.session_state and st.session_state['is_qr_valid']:
             show_data_input_page()
 
-    show_footer(MOCK_DATA)
+    show_footer()
     auto_download_session_state()
 
 if __name__ == "__main__":

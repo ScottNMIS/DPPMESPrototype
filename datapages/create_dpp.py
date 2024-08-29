@@ -83,12 +83,13 @@ def show_create_dpp_page():
             # Call the API to create the DPP
             response = create_dpp_api(dpp_data)
             
-            if response.status_code == 201:
+            if response["success"]:
                 st.session_state.dpp_data = dpp_data
                 st.success(f"DPP created successfully! Unique Code: {unique_code}")
                 st.info("You can now use this code to access the DPP via the 'Scan QR Code' page.")
             else:
-                st.error(f"Failed to create DPP. Error: {response.text}")
+                st.error(f"Failed to create DPP. Error: {response['error']}")
+
         else:
             st.error("Please fill in at least the Product Name and Manufacturer fields.")
 
