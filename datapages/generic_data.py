@@ -1,3 +1,4 @@
+#Can ignore this page, it is just styles and footer details. No technical code.
 import streamlit as st
 from datapages.login import init_session_state, get_login_details, logout
 from datetime import date
@@ -5,12 +6,10 @@ from datetime import date
 import os
 
 
+#Footer, doesn't work with image using HTML style. Not sure how to fix...
 def show_footer():
-    # Get the absolute path to the image
-    base_path = "C:/Unity/DPPMESPrototype"  # This is your working directory
-    image_path = os.path.join(base_path, "images", "nmis_logo_small.png")  # Construct the full path
-
-    # Embed the image in the HTML using the absolute path
+    base_path = "C:/Unity/DPPMESPrototype"
+    image_path = os.path.join(base_path, "images", "nmis_logo_small.png")
     footer_html = f"""
     <footer style="background-color: #00008B; color: white; padding: 40px 0; font-family: Arial, sans-serif;">
         <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px; display: flex; justify-content: space-between; align-items: center;">

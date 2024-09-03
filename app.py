@@ -1,4 +1,4 @@
-#This is the main page for runnign the applicaiton. All logic is derived from main to call other scripts functions.
+#This is the main page for running the applicaiton. All logic is derived from main to call other scripts functions.
 import streamlit as st
 from streamlit_option_menu import option_menu
 from datapages.dpp_dashboard import show_dpp_dashboard
@@ -80,7 +80,7 @@ def main():
             show_data_input_page()
 
     show_footer()
-    auto_download_session_state()
+    auto_download_session_state() #Every 30 seconds auto-save live data
 
 if __name__ == "__main__":
     main()

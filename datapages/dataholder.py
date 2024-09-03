@@ -3,7 +3,7 @@
 #from the server side
 import streamlit as st
 
-
+#TODO Re-write to pull data from server. Use MockData to access DPP data.
 MOCK_DATA = {
     "productName": "High-Performance Turbine Blade",
     "partNumber": "TB-2024-X1",

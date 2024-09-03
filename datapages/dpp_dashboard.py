@@ -1,8 +1,9 @@
+#Main dpp dashboard that is accessible after logging in (not authorised for advanced dpp).
+#dashboard uses mock data from generic data nad data holder. Includes working openAI implementation, but can be ignored as not vital to work.
 import streamlit as st
 import json
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
-#from datapages.dpp_advanceddashboard import show_advanced_dpp_dashboard, MOCK_DATA
 from datetime import datetime
 import os
 from openai import OpenAI
@@ -10,9 +11,8 @@ from decouple import config
 from datapages.generic_data import show_footer, show_top_bar
 from datapages.dataholder import MOCK_DATA
 
-# Set up your OpenAI API key using the .env file
+# loading api key with env file
 client = OpenAI(api_key=config('OPENAI_API_KEY'))
-
 
 # Initialize session state
 if 'account_name' not in st.session_state:
@@ -27,7 +27,7 @@ def load_json_data():
         data = json.load(json_file)
     return data
 
-# Define your functions (unchanged)
+
 functions = [
     {
         "name": "get_weather",
@@ -70,7 +70,7 @@ functions = [
     }
 ]
 
-# Mock functions (unchanged)
+
 def get_weather(location):
     temp = 25  # Mock temperature
     return f"The weather in {location} is sunny and {temp} degrees."
@@ -177,6 +177,7 @@ def create_gauge_chart(value, title):
     ))
     fig.update_layout(height=300)
     return fig
+
 
 def show_dpp_dashboard():
 
