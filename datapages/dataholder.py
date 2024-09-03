@@ -1,3 +1,6 @@
+#This was planned to be the section to store/save/retrieve temp data. 
+#Ideally, all data could be collected here and saved as a single push at timed intervals and then reloaded once the application resumes
+#from the server side
 import streamlit as st
 
 

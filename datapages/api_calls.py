@@ -1,3 +1,4 @@
+#This script should be used to house all api calls throughout the application
 import requests
 import io
 
@@ -19,6 +20,7 @@ def create_dpp_api(dpp_data):
     except requests.exceptions.RequestException as e:
         return {"success": False, "error": str(e)}
 
+#TODO method to get machine data from database or table. Currently returns sample data.
 def get_machine_data():
     """
     Placeholder function to get machine data from a SQL database
@@ -43,11 +45,9 @@ def get_machine_data():
         }
     }
 
+#Placeholder function to get pre-loaded DPP data
+#In the future, this should fetch data from a real API or database
 def get_dpp_data():
-    """
-    Placeholder function to get pre-loaded DPP data
-    In the future, this should fetch data from a real API or database
-    """
     # Mock data for demonstration
     return {
         "part_number": "PN12345",

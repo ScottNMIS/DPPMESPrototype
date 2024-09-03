@@ -1,3 +1,5 @@
+#Advanced dpp dashboard tab for authorised individuals for Remanufacture.
+#If short on time, can be ignored and use only the default dpp dashboard.
 import streamlit as st
 import pandas as pd
 import numpy as np

@@ -1,3 +1,4 @@
+#This is the main page for runnign the applicaiton. All logic is derived from main to call other scripts functions.
 import streamlit as st
 from streamlit_option_menu import option_menu
 from datapages.dpp_dashboard import show_dpp_dashboard
